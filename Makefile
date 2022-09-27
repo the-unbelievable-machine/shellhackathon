@@ -1,80 +1,90 @@
-.PHONY: clean data lint requirements sync_data_to_s3 sync_data_from_s3
+.PHONY: clean clean_data data env_create lint test testwatch enable_hooks sync_data_to_s3 sync_data_from_s3
+
+
+#################################################################################
+# DOC                                                                           #
+#################################################################################
+#
+# Make's special variables:
+#   $@ is the target
+#   $^ is all prereqs
+#   $< is the first prereq
+#   $* is the "stem" of the "pattern rule" match
+
 
 #################################################################################
 # GLOBALS                                                                       #
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
-PROFILE = default
+S3_BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
+AWS_PROFILE = default
 PROJECT_NAME = shellhackathon
-PYTHON_INTERPRETER = python3
 
-ifeq (,$(shell which conda))
-HAS_CONDA=False
-else
-HAS_CONDA=True
-endif
 
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
 
-## Install Python Dependencies
-requirements: test_environment
-	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
-
-## Make Dataset
-data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
+## Make data
+data:
+	python shellhackathon/data/make_dataset.py data/raw data/interim
 
 ## Delete all compiled Python files
 clean:
-	find . -type f -name "*.py[co]" -delete
-	find . -type d -name "__pycache__" -delete
+	find . -name "*.pyc" -exec rm {} \;
 
-## Lint using flake8
+## Delete all data
+clean_data:
+	rm -rf data/interim/*
+	rm -rf data/processed/*
+
+## Create dependency visualization from Makefile
+dep.png: Makefile
+	python bin/makefile2dot.py < Makefile | dot -Tpng > dep.png
+	open dep.png
+
+## Set up an environment with pipenv
+env_create:
+	pipenv install numpy scipy pandas matplotlib seaborn jupyter nbstripout sklearn mypy flake8 pytest pytest-watch click click_log
+
+## Lint using flake8 and mypy
 lint:
-	flake8 src
+	flake8 shellhackathon
+	mypy shellhackathon
+
+## Run the unit tests
+test:
+	pytest
+
+## Run tests on every file change
+testwatch:
+	ptw
+
+## Enable flake8 and nbstripout hooks
+enable_hooks:
+	# flake8
+	flake8 --install-hook=git
+	git config --bool flake8.strict true
+	# nbstripout
+	nbstripout --install --attributes .gitattributes
 
 ## Upload Data to S3
 sync_data_to_s3:
-ifeq (default,$(PROFILE))
-	aws s3 sync data/ s3://$(BUCKET)/data/
+ifeq (default,$(AWS_PROFILE))
+	aws s3 sync data/ s3://$(S3_BUCKET)/data/
 else
-	aws s3 sync data/ s3://$(BUCKET)/data/ --profile $(PROFILE)
+	aws s3 sync data/ s3://$(S3_BUCKET)/data/ --profile $(AWS_PROFILE)
 endif
 
 ## Download Data from S3
 sync_data_from_s3:
-ifeq (default,$(PROFILE))
-	aws s3 sync s3://$(BUCKET)/data/ data/
+ifeq (default,$(AWS_PROFILE))
+	aws s3 sync s3://$(S3_BUCKET)/data/ data/
 else
-	aws s3 sync s3://$(BUCKET)/data/ data/ --profile $(PROFILE)
+	aws s3 sync s3://$(S3_BUCKET)/data/ data/ --profile $(AWS_PROFILE)
 endif
 
-## Set up python interpreter environment
-create_environment:
-ifeq (True,$(HAS_CONDA))
-		@echo ">>> Detected conda, creating conda environment."
-ifeq (3,$(findstring 3,$(PYTHON_INTERPRETER)))
-	conda create --name $(PROJECT_NAME) python=3
-else
-	conda create --name $(PROJECT_NAME) python=2.7
-endif
-		@echo ">>> New conda env created. Activate with:\nsource activate $(PROJECT_NAME)"
-else
-	$(PYTHON_INTERPRETER) -m pip install -q virtualenv virtualenvwrapper
-	@echo ">>> Installing virtualenvwrapper if not already installed.\nMake sure the following lines are in shell startup file\n\
-	export WORKON_HOME=$$HOME/.virtualenvs\nexport PROJECT_HOME=$$HOME/Devel\nsource /usr/local/bin/virtualenvwrapper.sh\n"
-	@bash -c "source `which virtualenvwrapper.sh`;mkvirtualenv $(PROJECT_NAME) --python=$(PYTHON_INTERPRETER)"
-	@echo ">>> New virtualenv created. Activate with:\nworkon $(PROJECT_NAME)"
-endif
-
-## Test python environment is setup correctly
-test_environment:
-	$(PYTHON_INTERPRETER) test_environment.py
 
 #################################################################################
 # PROJECT RULES                                                                 #
@@ -86,7 +96,7 @@ test_environment:
 # Self Documenting Commands                                                     #
 #################################################################################
 
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := show-help
 
 # Inspired by <http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html>
 # sed script explained:
@@ -103,8 +113,8 @@ test_environment:
 # 	* print line
 # Separate expressions are necessary because labels cannot be delimited by
 # semicolon; see <http://stackoverflow.com/a/11799865/1968>
-.PHONY: help
-help:
+.PHONY: show-help
+show-help:
 	@echo "$$(tput bold)Available rules:$$(tput sgr0)"
 	@echo
 	@sed -n -e "/^## / { \

@@ -186,7 +186,7 @@ latex_documents = [
     ('index',
      'shellhackathon.tex',
      u'shellhackathon Documentation',
-     u"OBS-UM", 'manual'),
+     u"obs", 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -216,7 +216,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'shellhackathon', u'shellhackathon Documentation',
-     [u"OBS-UM"], 1)
+     [u"obs"], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -230,8 +230,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     ('index', 'shellhackathon', u'shellhackathon Documentation',
-     u"OBS-UM", 'shellhackathon',
-     'Shell hackathon ', 'Miscellaneous'),
+     u"obs", 'shellhackathon',
+     'Solution attempt for shell hackathon 2022', 'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

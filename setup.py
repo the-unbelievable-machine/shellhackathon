@@ -1,10 +1,11 @@
-from setuptools import find_packages, setup
+from setuptools import setup
+
 
 setup(
-    name='src',
-    packages=find_packages(),
-    version='0.1.0',
-    description='Shell hackathon ',
-    author='OBS-UM',
-    license='',
+    name='shellhackathon',
+    version='0.1',
+    description='Solution attempt for shell hackathon 2022',
+    author='*um',
+    packages=['shellhackathon'],
+    zip_safe=False
 )
