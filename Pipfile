@@ -21,6 +21,7 @@ click-log = "*"
 jupyterlab = "*"
 tpot = "*"
 pycaret = "*"
+ortools = "*"
 
 [dev-packages]
 
