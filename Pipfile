@@ -22,6 +22,7 @@ jupyterlab = "*"
 tpot = "*"
 pycaret = "*"
 ortools = "*"
+rise = "*"
 
 [dev-packages]
 
