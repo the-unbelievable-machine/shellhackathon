@@ -1,0 +1,31 @@
+2022-10-19 11:41:04,418:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2022-10-19 11:41:04,419:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2022-10-19 11:41:04,419:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2022-10-19 11:41:04,419:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2022-10-19 11:41:05,492:WARNING:
+'prophet' is a soft dependency and not included in the pycaret installation. Please run: `pip install prophet` to install.
+2022-10-19 11:48:35,641:WARNING:/Users/andreas.maier/.local/share/virtualenvs/shellhackathon-J-_FuwKv/lib/python3.10/site-packages/sklearn/metrics/_scorer.py:765: FutureWarning: sklearn.metrics.SCORERS is deprecated and will be removed in v1.3. Please use sklearn.metrics.get_scorer_names to get a list of available scorers and sklearn.metrics.get_metric to get scorer.
+  warnings.warn(
+
+2022-10-19 12:24:24,087:WARNING:/Users/andreas.maier/.local/share/virtualenvs/shellhackathon-J-_FuwKv/lib/python3.10/site-packages/sklearn/base.py:493: FutureWarning: The feature names should match those that were passed during fit. Starting version 1.2, an error will be raised.
+Feature names unseen at fit time:
+- 2018
+Feature names seen at fit time, yet now missing:
+- 2010
+
+  warnings.warn(message, FutureWarning)
+
+2022-10-19 12:24:25,268:WARNING:/Users/andreas.maier/.local/share/virtualenvs/shellhackathon-J-_FuwKv/lib/python3.10/site-packages/sklearn/base.py:493: FutureWarning: The feature names should match those that were passed during fit. Starting version 1.2, an error will be raised.
+Feature names unseen at fit time:
+- 2018
+- 2019
+Feature names seen at fit time, yet now missing:
+- 2010
+- 2011
+
+  warnings.warn(message, FutureWarning)
+
